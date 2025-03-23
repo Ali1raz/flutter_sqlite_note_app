@@ -9,6 +9,13 @@ flutter pub add path path_provider sqflite
 flutter pub get
 ```
 
+```yaml
+dependencies:
+  sqflite: ^2.4.2
+  path: ^1.9.1
+```
+
+
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 

@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 
 class NoteDetailsScreen extends StatefulWidget {
-  const NoteDetailsScreen({super.key});
+  const NoteDetailsScreen({super.key, required this.title});
+
+  final String title;
 
   @override
-  State<NoteDetailsScreen> createState() => _NoteDetailsScreenState();
+  State<NoteDetailsScreen> createState() => _NoteDetailsScreenState(this.title);
 }
 
 class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
+  _NoteDetailsScreenState(this.title);
+  final String title;
 
-  static var _priorities = ['High', 'Low'];
+  static final _priorities = ['High', 'Low'];
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  void moveToLastScreen() {
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Note Details"),
+        title: Text(title),
+        leading: IconButton(
+            onPressed: () => moveToLastScreen(),
+            icon: Icon(Icons.arrow_back)
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
@@ -35,8 +50,66 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
                       debugPrint("Selected Value: $selectedValue");
                     });
                   }),
-            )
-            ]
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16, bottom: 16),
+              child: TextField(
+                controller: titleController,
+                onChanged: (value) {
+                  debugPrint("title");
+                },
+                decoration: InputDecoration(
+                  labelText: "Title",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5)
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16, bottom: 16),
+              child: TextField(
+                controller: descriptionController,
+                onChanged: (value) {
+                  debugPrint("Description");
+                },
+                decoration: InputDecoration(
+                  labelText: "Description",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16, bottom: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            debugPrint("save");
+                          });
+                        },
+                        child: Text("Save"),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          debugPrint("delete");
+                        });
+                      },
+                      child: Text("Delete"),
+                    ),
+                  ),
+                ],
+              )
+            ),
+          ],
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqlite/screens/note_details_screen.dart';
 
 class NoteListScreen extends StatefulWidget {
   const NoteListScreen({super.key});
@@ -26,6 +27,12 @@ class _NoteListScreenState extends State<NoteListScreen> {
             trailing: Icon(Icons.delete),
             onTap: () {
               debugPrint("onTap ListTile");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NoteDetailsScreen(title: "Note Details")
+                  ),
+              );
             },
           ),
         );
@@ -44,6 +51,12 @@ class _NoteListScreenState extends State<NoteListScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint("FloatingActionButton onPressed");
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => NoteDetailsScreen(title: "Add Note",)
+              ),
+          );
         },
         tooltip: "Add Note",
         child: Icon(Icons.add),
