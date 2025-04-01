@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 
 class NoteDetailsScreen extends StatefulWidget {
-  const NoteDetailsScreen({super.key, required this.title});
-
-  final String title;
+  const NoteDetailsScreen({super.key});
 
   @override
-  State<NoteDetailsScreen> createState() => _NoteDetailsScreenState(this.title);
+  State<NoteDetailsScreen> createState() => _NoteDetailsScreenState();
 }
 
 class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
-  _NoteDetailsScreenState(this.title);
-  final String title;
+  _NoteDetailsScreenState();
 
   static final _priorities = ['High', 'Low'];
 
@@ -26,10 +23,10 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text("title"),
         leading: IconButton(
-            onPressed: () => moveToLastScreen(),
-            icon: Icon(Icons.arrow_back)
+          onPressed: () => moveToLastScreen(),
+          icon: Icon(Icons.arrow_back),
         ),
       ),
       body: Padding(
@@ -38,18 +35,17 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
           children: [
             ListTile(
               title: DropdownButton(
-                  items: _priorities.map((String item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList(),
-                  value: _priorities[1],
-                  onChanged: (selectedValue) {
-                    setState(() {
-                      debugPrint("Selected Value: $selectedValue");
-                    });
-                  }),
+                items:
+                    _priorities.map((String item) {
+                      return DropdownMenuItem(value: item, child: Text(item));
+                    }).toList(),
+                value: _priorities[1],
+                onChanged: (selectedValue) {
+                  setState(() {
+                    debugPrint("Selected Value: $selectedValue");
+                  });
+                },
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 16, bottom: 16),
@@ -61,7 +57,7 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
                 decoration: InputDecoration(
                   labelText: "Title",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5)
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
               ),
@@ -76,7 +72,7 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
                 decoration: InputDecoration(
                   labelText: "Description",
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5)
+                    borderRadius: BorderRadius.circular(5),
                   ),
                 ),
               ),
@@ -87,12 +83,12 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            debugPrint("save");
-                          });
-                        },
-                        child: Text("Save"),
+                      onPressed: () {
+                        setState(() {
+                          debugPrint("save");
+                        });
+                      },
+                      child: Text("Save"),
                     ),
                   ),
                   SizedBox(width: 5),
@@ -107,7 +103,7 @@ class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
             ),
           ],
         ),

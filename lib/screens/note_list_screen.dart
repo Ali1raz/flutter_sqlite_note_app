@@ -16,7 +16,6 @@ class _NoteListScreenState extends State<NoteListScreen> {
       itemBuilder: (BuildContext context, int index) {
         return Card(
           color: Colors.white,
-          elevation: 2,
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.deepPurple,
@@ -28,34 +27,27 @@ class _NoteListScreenState extends State<NoteListScreen> {
             onTap: () {
               debugPrint("onTap ListTile");
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NoteDetailsScreen(title: "Note Details")
-                  ),
+                context,
+                MaterialPageRoute(builder: (context) => NoteDetailsScreen()),
               );
             },
           ),
         );
-      }
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Notes"),
-          elevation: 8,
-      ),
+      appBar: AppBar(title: Text("Notes"), elevation: 8),
       body: _getListView(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint("FloatingActionButton onPressed");
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => NoteDetailsScreen(title: "Add Note",)
-              ),
+            context,
+            MaterialPageRoute(builder: (context) => NoteDetailsScreen()),
           );
         },
         tooltip: "Add Note",
