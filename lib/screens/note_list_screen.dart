@@ -60,7 +60,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
           color: Colors.white,
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.deepPurple,
+              backgroundColor: _noteList![index].priority.color,
               child: Text(
                 _noteList![index].priority.title.substring(0, 1),
                 style: TextStyle(
