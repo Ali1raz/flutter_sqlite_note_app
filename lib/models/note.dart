@@ -1,11 +1,19 @@
-class Note {
-  int id;
-  String title;
-  String description;
-  String date;
-  int priority;
+import 'package:sqlite/utils/priority.dart';
 
-  Note({required this.id ,required this.title,required this.description,required this.date,required this.priority});
+class Note {
+  int? id;
+  String? title;
+  String? description;
+  String? date;
+  Priority priority;
+
+  Note({
+    this.id,
+    this.title,
+    this.description,
+    this.date,
+    required this.priority,
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -13,7 +21,7 @@ class Note {
       'title': title,
       'description': description,
       'date': date,
-      'priority': priority,
+      'priority': priority.title,
     };
   }
 
@@ -23,7 +31,7 @@ class Note {
       title: map['title'],
       description: map['description'],
       date: map['date'],
-      priority: map['priority'],
+      priority: Priority.fromString(map['priority']),
     );
   }
 }

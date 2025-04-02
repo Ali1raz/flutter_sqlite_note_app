@@ -8,6 +8,8 @@ class DatabaseHelper {
   static DatabaseHelper? _databaseHelper;
   static Database? _database;
 
+  String noteTable = 'note';
+
   DatabaseHelper._createInstance();
 
   factory DatabaseHelper() {
@@ -29,11 +31,11 @@ class DatabaseHelper {
 
   void _createDB(Database db, int v) async {
     await db.execute('''
-      create table note(
+      create table $noteTable(
         id integer primary key autoincrement,
         title text,
         description text,
-        priority integer,
+        priority text,
         date text
       )
     ''');
@@ -41,18 +43,18 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getNoteList() async {
     final db = await database;
-    return await db!.query('note', orderBy: 'priority ASC');
+    return await db!.query(noteTable, orderBy: 'priority ASC');
   }
 
   Future<int> addNote(Note note) async {
     final db = await database;
-    return await db!.insert('note', note.toMap());
+    return await db!.insert(noteTable, note.toMap());
   }
 
   Future<int> updateNote(Note note) async {
     final db = await database;
     return db!.update(
-      'note',
+      noteTable,
       note.toMap(),
       where: 'id = ?',
       whereArgs: [note.id],
@@ -61,12 +63,24 @@ class DatabaseHelper {
 
   Future<int> deleteNote(int id) async {
     final db = await database;
-    return await db!.delete('note', where: 'id = ?', whereArgs: [id]);
+    return await db!.delete(noteTable, where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> getNotesCount() async {
     final db = await database;
-    final x = await db!.rawQuery('select count(*) from note');
+    final x = await db!.rawQuery('select count(*) from $noteTable');
     return Sqflite.firstIntValue(x) ?? 0;
+  }
+
+  // Optional: Method to get a list of Note objects directly
+  Future<List<Note>> getNoteObjectList() async {
+    var noteMapList = await getNoteList();
+    int count = noteMapList.length;
+
+    List<Note> noteList = <Note>[];
+    for (int i = 0; i < count; i++) {
+      noteList.add(Note.fromMapObject(noteMapList[i]));
+    }
+    return noteList;
   }
 }

@@ -1,106 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:sqlite/models/note.dart';
+import 'package:sqlite/utils/db_helper.dart';
+import 'package:sqlite/utils/priority.dart';
 
 class NoteDetailsScreen extends StatefulWidget {
-  const NoteDetailsScreen({super.key});
+  final Note? note;
+  const NoteDetailsScreen({super.key, this.note});
 
   @override
   State<NoteDetailsScreen> createState() => _NoteDetailsScreenState();
 }
 
 class _NoteDetailsScreenState extends State<NoteDetailsScreen> {
-  _NoteDetailsScreenState();
+  final _formKey = GlobalKey<FormState>();
 
-  static final _priorities = ['High', 'Low'];
+  Priority _selectedPriority = Priority.low;
+  final TextEditingController _title = TextEditingController();
+  final TextEditingController _description = TextEditingController();
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  bool _isUpdating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.note != null) {
+      _isUpdating = true;
+      _title.text = widget.note!.title!;
+      _description.text = widget.note!.description!;
+      _selectedPriority = widget.note!.priority;
+    }
+  }
 
   void moveToLastScreen() {
     Navigator.pop(context);
+  }
+
+  void _saveNote() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Note note = Note(
+        id: _isUpdating ? widget.note!.id : null,
+        title: _title.text,
+        description: _description.text,
+        date: DateTime.now().toString(),
+        priority: _selectedPriority,
+      );
+
+      int result;
+      if (_isUpdating) {
+        result = await _dbHelper.updateNote(note);
+      } else {
+        result = await _dbHelper.addNote(note);
+      }
+
+      if (result != 0) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Note saved successfully!")));
+        moveToLastScreen();
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error saving note!")));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("title"),
+        title: Text(_isUpdating ? "Update Note" : "Add Note"),
         leading: IconButton(
-          onPressed: () => moveToLastScreen(),
+          onPressed: moveToLastScreen,
           icon: Icon(Icons.arrow_back),
         ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
-        child: ListView(
+        child: Column(
           children: [
-            ListTile(
-              title: DropdownButton(
-                items:
-                    _priorities.map((String item) {
-                      return DropdownMenuItem(value: item, child: Text(item));
-                    }).toList(),
-                value: _priorities[1],
-                onChanged: (selectedValue) {
-                  setState(() {
-                    debugPrint("Selected Value: $selectedValue");
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16, bottom: 16),
-              child: TextField(
-                controller: titleController,
-                onChanged: (value) {
-                  debugPrint("title");
-                },
-                decoration: InputDecoration(
-                  labelText: "Title",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16, bottom: 16),
-              child: TextField(
-                controller: descriptionController,
-                onChanged: (value) {
-                  debugPrint("Description");
-                },
-                decoration: InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16, bottom: 16),
-              child: Row(
+            Form(
+              key: _formKey,
+              child: Column(
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          debugPrint("save");
-                        });
-                      },
-                      child: Text("Save"),
-                    ),
+                  TextFormField(
+                    maxLength: 20,
+                    decoration: InputDecoration(labelText: "Title"),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "no input :( (-_-) ";
+                      }
+                      return null;
+                    },
+                    controller: _title,
                   ),
-                  SizedBox(width: 5),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          debugPrint("delete");
-                        });
-                      },
-                      child: Text("Delete"),
-                    ),
+
+                  TextFormField(
+                    maxLength: 50,
+                    decoration: InputDecoration(labelText: "Description"),
+                    validator: (value) {
+                      if (value == null || value.isEmpty || value.length < 5) {
+                        return "value == null || value.isEmpty || value.length < 5";
+                      }
+                      return null;
+                    },
+                    controller: _description,
+                  ),
+                  DropdownButtonFormField(
+                    value: _selectedPriority,
+                    decoration: InputDecoration(labelText: "Priority"),
+                    items:
+                        Priority.values.map((p) {
+                          return DropdownMenuItem(
+                            value: p,
+                            child: Text(p.title),
+                          );
+                        }).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedPriority = val!;
+                      });
+                    },
+                  ),
+
+                  SizedBox(height: 30),
+                  FilledButton(
+                    onPressed: _saveNote,
+                    child: Text(_isUpdating ? "Update" : "Save"),
                   ),
                 ],
               ),
